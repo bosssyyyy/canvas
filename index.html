@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>黑客帝国代码雨</title>
+	<style>
+		* {
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+		}
+		
+		#canvas {
+			background-color: black;
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<canvas id="canvas">您的浏览器版本不支持canvas，换一个洛</canvas>
+	</div>
+	<script>
+		var c = document.getElementById("canvas"); //找到canvas画布
+		// 当浏览器窗口改变时动态调整canvas尺寸
+		c.width = window.innerWidth;
+		c.height = window.innerHeight;
+		// // 窗口改变
+		window.onresize = function() {
+			
+			ctx.clearRect(0,0,c.width,c.height); //清空画布
+
+
+			c.width = window.innerWidth;
+			c.height = window.innerHeight;
+			move();
+		}
+		
+		var ctx = c.getContext("2d");  //  创建context对象
+		ctx.font = "20px Arial";
+		// 在（20,100）处画实心文本
+		// ctx.fillStyle = "green";
+
+		// 1.绑定页面加载完成"下雨"事件
+
+		// 2.调代雨属性以及方法:
+				// 属性:
+				// 1.初始坐标x
+				// 2.初始坐标y  (控制位置)
+				// 3.随机生成速度  (下落速度)
+				// 4.body数组(装M个代码对象)
+				// 	4.1每一个代码属性:
+				// 	  x坐标 (与代码雨一致)
+				// 	  y坐标 根据速度规则递增
+				// 	   速度 (与代码雨一致)
+				
+		function Text(options) {
+			var options = options || {};
+			this.x = Math.floor(Math.random()*window.innerWidth);//随机水平位置(全屏)
+			this.y = -Math.floor(Math.random()*100) ;//随机竖直位置
+			this.v = Math.floor(Math.random()*20)+10; //随机下落增量
+			this.body = [  //代码对象数组(一条雨的“雨滴)数
+			]
+		}
+		// 生成N个代码create()
+		
+		Text.prototype.create = function() {
+			for(var i = 0; i < 14; i++) {
+				this.body.push({
+					x:this.x,
+					y:this.y + i*20,
+					txt:Math.floor(Math.random()*4/2),
+					a:i*0.1
+				})
+			}
+		}
+		
+		// 在canvas画布上将生成的代码雨画出来draw()
+		Text.prototype.draw = function() {
+			for(var i = 0; i < this.body.length; i++) {
+				ctx.fillStyle = 'rgba(0,255,0,'+this.body[i].a+')';
+				ctx.fillText(this.body[i].txt,this.body[i].x,this.body[i].y);
+			}
+		}
+		Text.prototype.move = function() {
+			this.body.forEach((item) => {
+				item.y += this.v;  //改变位置
+				if(item.y - window.innerHeight > 0 ) {
+					item.y = 0;
+				}
+			})
+		}
+		var arr = [];
+		// 生成M条代码雨
+		for(var i= 0; i < 100; i++) {
+			var t = new Text();
+			t.create();  //声场代码雨的身体
+			t.draw();
+			arr.push(t);
+		}
+		
+		
+		// 一直移动
+		function move(){
+			ctx.clearRect(0,0,c.width,c.height); //清空画布
+			
+			arr.forEach((item) => {
+				item.move(); //移动一格
+				item.draw();
+			})
+			requestAnimationFrame(move);
+		}
+		move();
+
+		
+
+
+	</script>
+</body>
+</html>
